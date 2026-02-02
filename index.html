@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
+        }
+        .calculator {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        button.clear {
+            grid-column: span 2;
+            background: #ff6b6b;
+        }
+        button.clear:hover {
+            background: #ff5252;
+        }
+        button.equals {
+            grid-column: span 2;
+            background: #51cf66;
+        }
+        button.equals:hover {
+            background: #40c057;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <label for="first">First number</label>
+        <input id="first" type="number" step="any" placeholder="Enter first number">
+        <label for="second">Second number</label>
+        <input id="second" type="number" step="any" placeholder="Enter second number">
+
+        <label for="operation">Operation</label>
+        <select id="operation">
+            <option value="1">1. Addition</option>
+            <option value="2">2. Subtraction</option>
+            <option value="3">3. Multiplication</option>
+            <option value="4">4. Division (first / second)</option>
+            <option value="5">5. Division (second / first)</option>
+            <option value="6">6. Comparison (first > second)</option>
+            <option value="7">7. Comparison (first < second)</option>
+            <option value="8">8. Comparison (first == second)</option>
+            <option value="9">9. Logarithm of first number (base e)</option>
+            <option value="10">10. Logarithm of second number (base e)</option>
+            <option value="11">11. Logarithm of first number (base 10)</option>
+            <option value="12">12. Logarithm of second number (base 10)</option>
+            <option value="13">13. Logarithm of second number with base first number</option>
+            <option value="14">14. Logarithm of first number with base second number</option>
+            <option value="15">15. Exponential of first number</option>
+            <option value="16">16. Exponential of second number</option>
+            <option value="17">17. Square root of first number</option>
+            <option value="18">18. Square root of second number</option>
+            <option value="19">19. Power (first number ^ second number)</option>
+            <option value="20">20. Power (second number ^ first number)</option>
+        </select>
+
+        <div class="actions" style="display:flex;gap:10px;margin-top:10px;">
+            <button class="clear" onclick="clearFields()">Clear</button>
+            <button class="equals" onclick="calculate()">Calculate</button>
+        </div>
+
+        <input id="result" readonly placeholder="Result will appear here">
+    </div>
+
+    <script>
+        function clearFields() {
+            document.getElementById('first').value = '';
+            document.getElementById('second').value = '';
+            document.getElementById('result').value = '';
+            document.getElementById('operation').selectedIndex = 0;
+        }
+
+        function calculate() {
+            const op = parseInt(document.getElementById('operation').value, 10);
+            const b = parseFloat(document.getElementById('first').value);
+            const c = parseFloat(document.getElementById('second').value);
+            const resField = document.getElementById('result');
+
+            if (isNaN(b) || isNaN(c)) {
+                resField.value = 'Error: both numbers must be provided';
+                return;
+            }
+
+            let out;
+            try {
+                switch (op) {
+                    case 1:
+                        out = b + c;
+                        break;
+                    case 2:
+                        out = b - c;
+                        break;
+                    case 3:
+                        out = b * c;
+                        break;
+                    case 4:
+                        if (c === 0) throw 'Division by zero';
+                        out = b / c;
+                        break;
+                    case 5:
+                        if (b === 0) throw 'Division by zero';
+                        out = c / b;
+                        break;
+                    case 6:
+                        out = (b > c).toString();
+                        break;
+                    case 7:
+                        out = (b < c).toString();
+                        break;
+                    case 8:
+                        out = (b === c).toString();
+                        break;
+                    case 9:
+                        if (b <= 0) throw 'Logarithm domain error';
+                        out = Math.log(b);
+                        break;
+                    case 10:
+                        if (c <= 0) throw 'Logarithm domain error';
+                        out = Math.log(c);
+                        break;
+                    case 11:
+                        if (b <= 0) throw 'Logarithm domain error';
+                        out = Math.log10 ? Math.log10(b) : Math.log(b) / Math.LN10;
+                        break;
+                    case 12:
+                        if (c <= 0) throw 'Logarithm domain error';
+                        out = Math.log10 ? Math.log10(c) : Math.log(c) / Math.LN10;
+                        break;
+                    case 13:
+                        if (b <= 0 || b === 1 || c <= 0) throw 'Invalid base or argument for log';
+                        out = Math.log(c) / Math.log(b);
+                        break;
+                    case 14:
+                        if (c <= 0 || c === 1 || b <= 0) throw 'Invalid base or argument for log';
+                        out = Math.log(b) / Math.log(c);
+                        break;
+                    case 15:
+                        out = Math.exp(b);
+                        break;
+                    case 16:
+                        out = Math.exp(c);
+                        break;
+                    case 17:
+                        if (b < 0) throw 'Square root domain error';
+                        out = Math.sqrt(b);
+                        break;
+                    case 18:
+                        if (c < 0) throw 'Square root domain error';
+                        out = Math.sqrt(c);
+                        break;
+                    case 19:
+                        out = Math.pow(b, c);
+                        break;
+                    case 20:
+                        out = Math.pow(c, b);
+                        break;
+                    default:
+                        throw 'Invalid operation';
+                }
+                resField.value = out;
+            } catch (err) {
+                resField.value = 'Error: ' + err;
+            }
+        }
+    </script>
+</body>
+</html>
